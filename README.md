@@ -1,5 +1,7 @@
 # RecurrenceDetector
 
+[![Build Status](https://travis-ci.org/17hats/recurrence_detector.svg?branch=master)](https://travis-ci.org/17hats/recurrence_detector)
+
 Given an array of dates, this gem detectes the recurrence pattern.
 
 ## Installation
