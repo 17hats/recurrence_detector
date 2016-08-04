@@ -32,7 +32,7 @@ dates = [
 ]
 
 RecurrenceDetector.new(dates).detect
-# => { recurrence: :every_week }
+# => { recurrence: :every_week, on: :monday }
 
 ```
 

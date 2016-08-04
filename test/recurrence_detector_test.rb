@@ -1,5 +1,10 @@
 require 'test_helper'
 
+# TODO: Months: ordinal/last weekday
+# TODO: Months: ordinal/last weekend
+# TODO: Months: ordinal/last days repeating every 2, 3, 4, etc months
+# TODO: Custom Years: Every three years in Aug and Sept on the third weekend
+
 class RecurrenceDetectorTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::RecurrenceDetector::VERSION
@@ -104,15 +109,15 @@ class RecurrenceDetectorTest < Minitest::Test
 
   def test_detects_custom_weeks_two_weeks_on_mon_wed_fri
     dates = [
-      Date.new(2001, 1, 29),
-      Date.new(2001, 1, 31),
-      Date.new(2001, 2, 2),
-      Date.new(2001, 2, 12),
-      Date.new(2001, 2, 14),
-      Date.new(2001, 2, 16),
-      Date.new(2001, 2, 26),
-      Date.new(2001, 2, 28),
-      Date.new(2001, 3, 2)
+      Date.new(2001, 1, 29), # Monday
+      Date.new(2001, 1, 31), # Wednesday
+      Date.new(2001, 2, 2),  # Friday
+      Date.new(2001, 2, 12), # Monday (Skips a week)
+      Date.new(2001, 2, 14), # Wednesday
+      Date.new(2001, 2, 16), # Friday
+      Date.new(2001, 2, 26), # Monday (Skips a week)
+      Date.new(2001, 2, 28), # Wednesday
+      Date.new(2001, 3, 2)   # Friday
     ]
 
     expected_recurrence = { recurrence: :custom_weeks, every: 2, on: %i[monday wednesday friday] }
@@ -202,16 +207,15 @@ class RecurrenceDetectorTest < Minitest::Test
   end
 
   def test_detects_custom_months_last_tuesday
-    skip
     dates = [
       Date.new(2001, 1, 30),
+      Date.new(2001, 2, 27),
       Date.new(2001, 3, 27),
-      Date.new(2001, 5, 29),
-      Date.new(2001, 7, 31),
-      Date.new(2001, 9, 25)
+      Date.new(2001, 4, 24),
+      Date.new(2001, 5, 29)
     ]
 
-    expected_recurrence = { recurrence: :custom_months, every: 2, on: [:last, :tuesday] }
+    expected_recurrence = { recurrence: :custom_months, every: 1, on: [:last, :tuesday] }
     recurrence = RecurrenceDetector.new(dates).detect
 
     assert_equal expected_recurrence, recurrence
@@ -274,7 +278,7 @@ class RecurrenceDetectorTest < Minitest::Test
       Date.new(2001, 2, 5)
     ]
 
-    expected_recurrence = { recurrence: :every_week }
+    expected_recurrence = { recurrence: :every_week, on: :monday }
     recurrence = RecurrenceDetector.new(dates).detect
 
     assert_equal expected_recurrence, recurrence
@@ -303,7 +307,7 @@ class RecurrenceDetectorTest < Minitest::Test
       Date.new(2001, 3, 1)
     ]
 
-    expected_recurrence = { recurrence: :every_month }
+    expected_recurrence = { recurrence: :every_month, on: 1 }
     recurrence = RecurrenceDetector.new(dates).detect
 
     assert_equal expected_recurrence, recurrence
@@ -331,7 +335,7 @@ class RecurrenceDetectorTest < Minitest::Test
       Date.new(2004, 1, 1)
     ]
 
-    expected_recurrence = { recurrence: :every_year }
+    expected_recurrence = { recurrence: :every_year, in: :january }
     recurrence = RecurrenceDetector.new(dates).detect
 
     assert_equal expected_recurrence, recurrence
